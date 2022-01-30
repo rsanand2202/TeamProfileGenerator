@@ -4,111 +4,132 @@ const Intern = require("./lib/intern");
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
+const Choice = require("inquirer/lib/objects/choice");
+const { clear } = require("console");
+const workTeam = [];
+const generateHtml = require("./lib/genarateHtml");
+//option for new employee selection 
+option = () =>{
+    inquirer.prompt({
+        type: 'list',
+        name: 'newEmployee',
+        message: 'You want to add another employee?',
+        choices: ["engineer","intern",'done'],
+        filter(value){
+            return value.toLowerCase()}
+    })
+    .then(({newEmployee}) => {
+        switch (newEmployee){
+            case 'engineer':
+                createEngineer();
+                break;
+            case 'intern':
+                createIntern();
+                break;
+            case 'done':
+                const htmlContent = generateHtml(workTeam);
+                fs.writeFile('./dist/index.html', htmlContent,(err)=>{
+                    err? console.log(err): console.log('Team created!!!!');      
+                })
+        }
+    });
+   
+}    
 
-function 
-
-menu =() => {
+//function which will question and assign to section
     createManager = () => {
+        createEngineer = () =>{
+            inquirer
+            .prompt([{
+                type: 'input',
+                name: 'name',
+                message: 'Please enter your engineer’s name'
+            },
+            {
+                type: 'input',
+                name: 'id',
+                message: ' Please enter your engineer’s id'
+            },
+            {
+                type: 'input',
+                name: 'email', // done
+                message: "Please enter your engineer’s email"
+            },
+            {
+                type: 'input',
+                name: 'github', // done
+                message: 'Please enter your engineers GitHub username'
+            }])
+            .then(({name,id,email,github}) => {
+                const engineer = new Engineer(name, id, email, github);
+                workTeam.push(engineer);
+                option();
+            })
+        }
+        createIntern = () =>{
+            inquirer
+            .prompt([
+                 {
+                type: 'input',
+                name: 'name',
+                message: 'Please enter inter name'
+            },
+            {
+                type: 'input',
+                name: 'id',
+                message: 'Please enter Intern id'
+            },
+            {
+                type: 'input',
+                name: 'email',
+                message: "Please enter intern's email"
+            },
+            {
+                type: 'input',
+                name: 'school', 
+                message: 'Please anter school attanding'
+            }])
+            .then(({name,id,email,school}) => {
+                const intern = new Intern(name, id, email,school);
+                workTeam.push(intern);
+                option();
+            })
+        
+        }
         inquirer
-        .prompt(
+        .prompt( 
             [
                 {
                     type: 'input',
                     name: 'name',
-                    message: 'Please enter team manager’s name?'
+                    message: 'Please enter team manager’s name.'
                 },
                 {
                     type: 'input',
                     name: 'id',
-                    message: 'What is the employee id?'
+                    message: ' Please enter team manager id.'
                 },
                 {
                     type: 'input',
-                    name: 'email', // done
-                    message: "What is their email address?"
+                    name: 'email',
+                    message: "Please enter manager's email address."
                 },
+                
                 {
                     type: 'input',
-                    name: 'address', // done
-                    message: 'What is their home address?'
-                },
-                {
-                    type: 'input',
-                    name: 'officeNumber', // done
+                    name: 'officeNumber',
                     message: 'What is their office number?'
                 },
             ]
         )
         .then(({name,id,email,officeNumber}) => {
             const manager = new Manager(name, id, email, officeNumber);
-            console.log(manager);
-        })
-        
+            workTeam.push(manager);
+            option();
 
-    },
+    })
+}
     createManager();
     
-   createEngineer = () =>{
-    inquirer
-    .prompt([{
-        type: 'input',
-        name: 'name',
-        message: 'What is the Engineer name?'
-    },
-    {
-        type: 'input',
-        name: 'id',
-        message: 'What is the employee id?'
-    },
-    {
-        type: 'input',
-        name: 'email', // done
-        message: "What is their email address?"
-    },
-    {
-        type: 'input',
-        name: 'github', // done
-        message: 'What is their github?'
-    },])
-    .then(({name,id,email,github}) => {
-        const engineer = new Engineer(name, id, email, github);
-        console.log(engineer);
-    })
-   },
-   createEngineer();
-   createIntern = () =>{
-    inquirer
-    .prompt([
-         {
-        type: 'input',
-        name: 'name',
-        message: 'What is the intern name?'
-    },
-    {
-        type: 'input',
-        name: 'id',
-        message: 'What is the employee id?'
-    },
-    {
-        type: 'input',
-        name: 'email', // done
-        message: "What is their email address?"
-    },
-    {
-        type: 'input',
-        name: 'school', // done
-        message: 'What school do they attend?'
-    },])
-    .then(({name,id,email,school}) => {
-        const intern = new Intern(name, id, email,school);
-        console.log(intern);
-    })
 
-   }
-   
-   
-   createIntern();
-
-}
     
-menu();
